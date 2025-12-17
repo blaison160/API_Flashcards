@@ -6,7 +6,7 @@ export const createCollectionSchema = z.object({
     visibility: z.boolean(),
 })
 
-export const collectionIdDschema = z.object({
+export const collectionIdSchema = z.object({
     id: z.uuid(),
 })
 
