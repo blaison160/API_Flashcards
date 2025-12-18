@@ -22,6 +22,7 @@ export const register = async (req,res) => {
             lastName,
             name,
             password: hashedPassword,
+            isAdmin: false
         }).returning({
             email: user.email,
             lastName: user.lastName,
@@ -66,9 +67,9 @@ export const login = async (req,res) => {
         res.status(200).json({
             message: 'Login succsessful',
             userData: {
-                email: user.email,
-                username: user.username,
-                id: user.id
+                email: usr.email,
+                username: usr.username,
+                id: usr.id
             },
             token
         })
