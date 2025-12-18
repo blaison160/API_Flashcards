@@ -1,7 +1,7 @@
 import { db } from '../db/database.js'
 import { collection, user } from '../db/schema.js'
 import { request, response } from 'express'
-import { eq, like } from 'drizzle-orm'
+import { and, eq, like } from 'drizzle-orm'
 
 /**
  * @param {request} req 
@@ -29,7 +29,7 @@ export const deleteCollection = async (req,res) => {
     try {
         const {id} = req.params
         const {userId} = req.user
-        const [deletedCollection] = await db.delete(collection).where(eq(collection.id,id)).returning()
+        const [deletedCollection] = await db.delete(collection).where(eq(collection.id,id))
         if(!deletedCollection){
             return res.status(404).json({message: 'Collection not found'})
         }
@@ -69,12 +69,12 @@ export const getCollectionById = async (req,res) => {
     try {
         const {id} = req.params
         const {userId} = req.user
-        const user = await db.select().from(user).where(eq(user.id,userId))
+        const usr = await db.select().from(user).where(eq(user.id,userId))
         const result = await db.select().from(collection).where(eq(collection.id,id)).orderBy('created_at','desc')
         if(!result){
             return res.status(404).json({message: 'Collection not found'})
         }
-        if(result.createdBy!=userId && result.visibility==false && !user.isAdmin){
+        if(result.createdBy!=userId && result.visibility==false && !usr.isAdmin){
             return res.status(403).json({message: "You do not have the right to view this collection"})
         }
         res.status(200).json(result)
@@ -90,8 +90,13 @@ export const getCollectionById = async (req,res) => {
  */
 export const getCollectionsByTitle = async (req,res) => {
     try {
-        const {title} = req.params
-        const results = await db.select().from(collection).where(and(eq(collection.visibility,true)),where(like(collection.title,"%"+title+"%"))).orderBy('created_at','desc')
+        const {title} = req.body
+        let query = db.select().from(collection)
+        if(title) {
+            query = query.where(and(eq(collection.visibility,true),like(collection.title,`%${title}%`)))
+        }
+        query = query.orderBy('created_at','desc')
+        const results = await query
         if(!results){
             return res.status(404).json({message: 'No result matching querry'})
         }
