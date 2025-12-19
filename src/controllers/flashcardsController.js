@@ -1,5 +1,6 @@
 import { db } from '../db/database.js'
-import { collection, flashcard, review, review, review, user } from '../db/schema.js'
+
+import { collection, flashcard, review, user } from '../db/schema.js'
 import { request, response } from 'express'
 import { eq, and } from 'drizzle-orm'
 
@@ -47,7 +48,6 @@ export const getFlashcardById = async (req,res) => {
         if(!flashcardResult){
             return res.status(404).json({message: 'Flashcard not found'})
         }
-        
         res.status(200).json(flashcardResult)
     } catch (error) {
         console.error(error)
@@ -81,6 +81,7 @@ export const getFlashcardByColletionId = async (req,res) => {
         res.status(500).json({error: 'Failed to querry flashcards'})
     }
 }
+
 
 export const getFlashcardsToReview = async (req,res) => {
     try {
@@ -157,6 +158,7 @@ export const deleteFlashcard = async (req,res) => {
         res.status(500).json({error: 'Failed to delete flashcard'})
     } 
 }
+
 
 export const reviewFlashcard = async (req,res) => {
     try {
