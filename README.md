@@ -1,44 +1,50 @@
+
 # API_FLASHCARDS
-### Sommaire :
+### Summary:
 [Introduction](#Introduction)
 [Installation](#Installation)
 [Configuration](#Configuration)
-[Lancement](#Lancement)
-[Initialisation de la base](#Initialisation)
+[Launch](#Launch)
+[Database Initialization](#Initialization)
+[Documentation](#Documentation)
 
-# 1-Introduction
+# Introduction
 
-API_FLASHCARDS est une API RESTful pour gérer des collections de flashcards avec une méthode de répétition espacée pour l’apprentissage.
+API_FLASHCARDS is a RESTful API for managing collections of flashcards with a spaced repetition method for learning.
 
-L’objectif est de proposer un backend permettant à des utilisateurs de :
+The goal is to provide a backend allowing users to:
 
-- créer un compte et se connecter,
-- créer, modifier et partager des collections de cartes,
-- réviser les cartes selon un système de répétition espacée,
-- gérer des droits d’accès (public / privé).
+- create an account and log in,
+- create, modify, and share card collections,
+- review cards according to a spaced repetition system,
+- manage access rights (public/private).
 
-Aucune interface frontend : le projet se concentre sur l’API et la conception backend.
-
+No frontend interface: the project focuses on the API and backend design.
 
 # Installation
 
-Clonez le dépôt GitHub, puis, dans un terminal, placez vous à la racine du projet (dans le dossier nommé API_FLASHCARDS) et effectuez la commande `npm install`.
+Clone the GitHub repository, then, in a terminal, navigate to the root of the project (in the folder named API_FLASHCARDS) and run the command `npm install`.
 
-> :warning: Le texte entre les symboles <> est à remplacer. Par exemple : <votre_nom> doit être remplacé par votre nom.
-> 
-> :warning: Toutes les manipulations s'effectuent à la racine du projet (dossier nommé API_FLASHCARDS)
+> :warning: Text between the symbols <> should be replaced. For example: <your_name> must be replaced with your name.
+>
+> :warning: All operations are performed at the root of the project (folder named API_FLASHCARDS)
 
 # Configuration
-### Création d'un fichier .env
-Créez un nouveau fichier nommé `.env`.
-Dans ce fichier, ajoutez :
-`DB_FILE=file:<nom_fichier_base_de_donnees>.db`
-`JWT_SECRET=<secret_JWT>` à générer [ici](https://jwtsecrets.com/)
+### Creating a .env file
+Create a new file named `.env`.
+In this file, add:
+`DB_FILE=file:<database_filename>.db`
+`JWT_SECRET=<JWT_secret>` to be generated [here](https://jwtsecrets.com/)
+You can also specify a specific port for the app (default is 3000) :
+`PORT=<port_number>`
 
-# Lancement
-Pour lancer le projet lancez la commande `npm run dev`
+# Launch
+To start the project, run the command `npm run dev`
 
-# Initialisation
-Pour initialiser la base de données, lancez la commande `npm run db:push`. Un fichier avec le nom spécifié dans le .env sera créé à la racine du projet.
+# Initialization
+To initialize the database, run the command `npm run db:push`. A file with the name specified in the .env will be created at the root of the project.
 
-Pour peupler la base de donnée avec des données de test, lancez a commande `npm rn db:seed`.
+To populate the database with test data, run the command `npm run db:seed`.
+
+# Documentation
+See the file [doc.md](./doc.md)
