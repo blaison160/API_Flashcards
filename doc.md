@@ -173,13 +173,31 @@ exemple
 ]
 
 ### Get a Collection
-GET /
+Return a collection by its id
 
+GET / : id
+Parameters;
+- id ( String) : UUID of the searched collection
 
+**Body**
 
+exemple
+GET /e6301ce6-297e-40f0-97db-46db9340cff5
+- request
 
+- response
+{
+  "id": "e6301ce6-297e-40f0-97db-46db9340cff5",
+  "title": "API",
+  "description": "questions about API",
+  "visibility": 1,
+  "createdBy": "abdabbac-7cf4-48bd-9cae-5e930838d512"
+}
 
+### Get  public Collections by title
+Return all public collections that have the given string in its title
 
+GET /titles?title=
 
 
 
