@@ -11,7 +11,7 @@ const seed = async () =>{
         await db.delete(collection)
         await db.delete(user)
 
-        const hashedPassword1 = await bcrypt.hash("passwd",12)
+        const hashedPassword1 = await bcrypt.hash("__passwd",12)
         const hashedPassword2 = await bcrypt.hash("123passwd",12)
         const hashedPassword3 = await bcrypt.hash("passwd123",12)
         const seedUser = [
