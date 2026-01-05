@@ -118,10 +118,28 @@ Parameters :
 ### Get  public Collections by title
 Return all public collections that have the given string in its title
 
-GET /collections/titles?title=
+```GET /collections/titles?title=<title>```
 
+Parameters :
+- 'title' (String) : a string (most of the time a keyword)
 
+**returned JSON**
 
+a list of JSON objects containing the ID, title, description, visibility and the creator's ID of each collection where parts the collection's title maches the given string
+
+[
+  {
+    "id": <uuid>,
+    "title": <title>,
+    "description": <description>,
+    "visibility": <0/1>,
+    "createdBy": <uuid>
+  },
+  {
+    ...
+  },
+  ...
+]
 
 
 
