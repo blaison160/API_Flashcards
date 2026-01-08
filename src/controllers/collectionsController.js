@@ -113,9 +113,20 @@ export const getCollectionsByTitle = async (req,res) => {
  */
 export const updateCollection = async (req,res) => {
     try {
+        let query = db.update(collection)
         const {id,title,description,visibility} = req.params
         const {userId} = req.user
-        const result = await db.update(collection).set({title: title, description: description,visibility:visibility}).where(and(eq(collection.id,id)),(eq(collection.createdBy,userId)))
+        if(title) {
+            query = query.set({title: title})
+        }
+        if(description) {
+            query = query.set({description: description})
+        }
+        if(visibility) {
+            query = query.set({visibility: visibility})
+        }
+        query = query.where(and(eq(collection.id,id)),(eq(collection.createdBy,userId)))
+        const result = await query
         if(!result){
             return res.status(404).json({message: 'Collection to update does not exist'})
         }

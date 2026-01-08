@@ -141,10 +141,36 @@ a list of JSON objects containing the ID, title, description, visibility and the
   ...
 ]
 
+### Update your Collections
+Updates the user's collection matching the given ID with the provided data
+
+```PATCH /collection/:id```
+
+Parameters :
+- 'id' ( String) : UUID of the collection to update
+
+**Body**
+These fields are optional
+
+- 'title' (String) : the title of the collection
+
+- 'description' (String) : the description of the collection
+
+- 'visibility' (Boolean) : **true** ( to create a public collection that is foundable for other users) /  **false** ( to create a private collection)
+
+**returned JSON**
+
+A confirmation message if the update was successful, an error message otherwise.
 
 
+### Delete your Collections
+Deletes the user's collection matching the given ID
 
+```DELETE /collection/:id```
 
+Parameters :
+- 'id' ( String) : UUID of the collection to update
 
+**returned JSON**
 
-
+A confirmation message if the update was successful, an error message otherwise.
