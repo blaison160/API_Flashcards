@@ -5,12 +5,11 @@ import { validateBody, validateParams, validateQuery } from "../middleware/valid
 import { authenticateToken } from "../middleware/authenticateToken.js";
 
 
-
 const router = Router()
 
 router.use(authenticateToken)
 
-router.get('/',)
+router.get('/',getMyCollections)
 
 router.get('/titles/',validateQuery(collectionTitleSchema),getCollectionsByTitle)
 
