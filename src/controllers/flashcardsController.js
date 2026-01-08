@@ -19,7 +19,7 @@ export const createFlashcard = async (req,res) => {
             return res.status(404).json({message: 'Collection of the flashcard not found'})
         }
 
-        const [newFlashcard] = await db.insert(flashcard).values({front,back,urlFront,urlBack:collectionId}).returning()
+        const [newFlashcard] = await db.insert(flashcard).values({front,back,urlFront,urlBack,collectionId}).returning()
 
         res.status(201).json({message: 'Flashcard created', data: newFlashcard})
     } catch (error) {
@@ -85,6 +85,14 @@ export const getFlashcardByColletionId = async (req,res) => {
 
 export const getFlashcardsToReview = async (req,res) => {
     try {
+        const reviews = await db.select().from(review).where(lte(review.lastReview,calculateDate(review.level))).orderBy('created_at','desc')
+        if(!result){
+            return res.status(404).json({message: 'Collection not found'})
+        }
+        if(result.createdBy!=userId && result.visibility==false && !usr.isAdmin){
+            return res.status(403).json({message: "You do not have the right to view this collection"})
+        }
+        res.status(200).json(result)
         
     } catch (error) {
       console.error(error)
@@ -190,22 +198,23 @@ export const reviewFlashcard = async (req,res) => {
 }
 
 
-const getNextReview = (difficulty) => {
-    switch (difficulty) {
+const getNextReview = (level) => {
+    switch (level) {
         case 2 :
             return 2
-            break;
         case 3 : 
             return 4
-            break;
         case 4 : 
             return 8
-            break;
         case 5 :
             return 16
-            break;
         default :
             return 1
-            break;
     }
+}
+
+const calculateDate = (level) => {
+    var d = new Date()
+    d.setDate(d.getDate()-getNextReview(level))
+    return d
 }

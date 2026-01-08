@@ -25,7 +25,7 @@ No frontend interface: the project focuses on the API and backend design.
 
 Clone the GitHub repository, then, in a terminal, navigate to the root of the project (in the folder named API_FLASHCARDS) and run the command `npm install`.
 
-> :warning: Text between the symbols <> should be replaced. For example: <your_name> must be replaced with your name.
+> :warning: Text between the symbols <> must be replaced. For example: <your_name> must be replaced with your name.
 >
 > :warning: All operations are performed at the root of the project (folder named API_FLASHCARDS)
 

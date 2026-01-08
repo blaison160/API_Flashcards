@@ -174,3 +174,22 @@ Parameters :
 **returned JSON**
 
 A confirmation message if the update was successful, an error message otherwise.
+
+
+//FLASHCARDS//
+
+router.delete('/:id',validateParams(flashcardIdSchema),deleteFlashcard)
+
+router.get('/:id',validateParams(flashcardIdSchema),getFlashcardById)
+
+router.get('/collection/:id',validateParams(collectionIdSchema),getFlashcardByColletionId)
+
+router.get('/review/',getFlashcardsToReview)
+
+router.patch('/:id',validateBody(createFlashcardSchema),updateFlashcard)
+
+router.patch('/review/:id',validateBody(flashcardlevelSchema),reviewFlashcard)
+
+router.post('/',validateBody(createFlashcardSchema),createFlashcard)
+
+//ADMIN//
