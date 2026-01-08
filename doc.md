@@ -169,14 +169,13 @@ Deletes the user's collection matching the given ID
 ```DELETE /collection/:id```
 
 Parameters :
-- 'id' ( String) : UUID of the collection to update
+- 'id' ( String) : UUID of the collection to delete
 
 **returned JSON**
 
 A confirmation message if the update was successful, an error message otherwise.
 
-
-//FLASHCARDS//
+### Flashcards
 
 router.delete('/:id',validateParams(flashcardIdSchema),deleteFlashcard)
 
@@ -192,4 +191,42 @@ router.patch('/review/:id',validateBody(flashcardlevelSchema),reviewFlashcard)
 
 router.post('/',validateBody(createFlashcardSchema),createFlashcard)
 
-//ADMIN//
+### Admin
+> :warning: These operations require being an Admin
+
+#### Get all users
+```GET /users```
+
+**returned JSON**
+
+a list of all users as JSON objects if the request is succesful, an error message otherwise
+
+#### Get a specific users
+```GET /users/:id```
+
+**returned JSON**
+
+if the request is successful :
+
+- 'id' the uuid of the user
+- 'email' the email of the user
+- 'lastName' the last name of the user
+- 'name' the name of the user
+- 'isAdmin' if the user is admin or not
+- 'createdAt' the user's date of creation
+
+else :
+
+- 'error' : the type of error
+
+#### Delete a specific user
+Deletes the user matching the given ID. All of the user's private collections will be deleted but not the public ones.
+
+```DELETE /users/:id```
+
+Parameters :
+- 'id' ( String) : UUID of the user to delete
+
+**returned JSON**
+
+A confirmation message if the update was successful, an error message otherwise.
