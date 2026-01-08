@@ -1,17 +1,24 @@
 import express from 'express'
 import collectionsRouter from './routers/collectionsRouter.js'
 import authRouter from './routers/authRouter.js'
+import flashcardRouter from './routers/flashcardRouter.js'
+import userRouter from './routers/userRouter.js'
 import logger from './middleware/logger.js'
 
 const PORT = process.env.PORT || 3000
 const app = express()
 
 app.use(express.json())
+
 app.use(logger)
 
 app.use('/collections',collectionsRouter)
 
 app.use('/auth',authRouter)
+
+app.use('/flashcards',flashcardRouter)
+
+app.use('/users',userRouter)
 
 
 app.listen(PORT, () => {
