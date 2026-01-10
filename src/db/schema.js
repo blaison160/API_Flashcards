@@ -27,7 +27,7 @@ export const flashcard =sqliteTable('flashcard',{
     back: text({length: 255}).notNull(),
     urlFront: text('url_front',{length: 255}),
     urlBack: text('url_back',{length: 255}),
-    collectionId: text('collecton_id').references(() => collection.id,{onDelete: 'cascade'}).notNull()
+    collectionId: text('collection_id').references(() => collection.id,{onDelete: 'cascade'}).notNull()
 }) 
 
 export const review = sqliteTable('review',{

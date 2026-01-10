@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { deleteFlashcard,getFlashcardById,getFlashcardByColletionId,getFlashcardsToReview,updateFlashcard,reviewFlashcard,createFlashcard } from "../controllers/flashcardsController.js";
-import { flashcardIdSchema, flashcardlevelSchema, createFlashcardSchema } from "../models/flashcards.js";
+import { flashcardIdSchema, flashcardlevelSchema, createFlashcardSchema, updateFlascardSchema } from "../models/flashcards.js";
 import { collectionIdSchema } from "../models/collections.js";
 import { validateBody, validateParams } from "../middleware/validation.js";
 import { authenticateToken } from "../middleware/authenticateToken.js";
@@ -17,7 +17,7 @@ router.get('/collection/:id',validateParams(collectionIdSchema),getFlashcardByCo
 
 router.get('/review/',getFlashcardsToReview)
 
-router.patch('/:id',validateBody(createFlashcardSchema),updateFlashcard)
+router.patch('/:id',validateBody(updateFlascardSchema),updateFlashcard)
 
 router.patch('/review/:id',validateBody(flashcardlevelSchema),reviewFlashcard)
 

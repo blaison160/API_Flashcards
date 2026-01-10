@@ -34,20 +34,26 @@ export const createFlashcard = async (req,res) => {
  */
 export const getFlashcardById = async (req,res) => {
     try {
-        const {flashcardId} = req.params
+        const {id} = req.params
         const {userId} = req.user
-        const [user] = await db.select().from(user).where(eq(user.id,userId))
-        const [collectionResult] = await db.select().from(collection).where(eq(collection.id,flashcard.collectionId))
-        if(!collectionResult){
-            return res.status(404).json({message: 'Collection of flashcard not found'})
-        }
-        if(collectionResult.createdBy!=userId && collectionResult.visibility==false && !user.isAdmin){
-            return res.status(403).json({message: "You do not have the right to view this collection's flashcards"})
-        }
-        const [flashcardResult] = await db.select().from(flashcard).where(eq(flashcard.id,flashcardId))
+        const [flashcardUser] = await db.select().from(user).where(eq(user.id,userId))
+        const [flashcardResult] = await db.select().from(flashcard).where(eq(flashcard.id,id))
+        
         if(!flashcardResult){
             return res.status(404).json({message: 'Flashcard not found'})
         }
+
+        const [collectionResult] = await db.select().from(collection).where(eq(collection.id,flashcardResult.collectionId))
+        
+        if(!collectionResult){
+            return res.status(404).json({message: 'Collection of flashcard not found'})
+        }
+        if(collectionResult.createdBy!=userId && collectionResult.visibility==false && !flashcardUser.isAdmin){
+            return res.status(403).json({message: "You do not have the right to view this collection's flashcards"})
+        }
+        
+        
+        
         res.status(200).json(flashcardResult)
     } catch (error) {
         console.error(error)
@@ -61,14 +67,14 @@ export const getFlashcardById = async (req,res) => {
  */
 export const getFlashcardByColletionId = async (req,res) => {
     try {
-        const {collectionId} = req.params
+        const {id} = req.params
         const {userId} = req.user
-        const [user] = await db.select().from(user).where(eq(user.id,userId))
-        const [collectionResult] = await db.select().from(collection).where(eq(collection.id,collectionId))
+        const [flashcardUser] = await db.select().from(user).where(eq(user.id,userId))
+        const [collectionResult] = await db.select().from(collection).where(eq(collection.id,id))
         if(!collectionResult){
             return res.status(404).json({message: 'Collection of flashcard not found'})
         }
-        if(collectionResult.createdBy!=userId && collectionResult.visibility==false && !user.isAdmin){
+        if(collectionResult.createdBy!=userId && collectionResult.visibility==false && !flashcardUser.isAdmin){
             return res.status(403).json({message: "You do not have the right to view this collection's flashcards"})
         }
         const flashcardResult = await db.select().from(flashcard).where(eq(flashcard.collectionId,id))
@@ -106,34 +112,38 @@ export const getFlashcardsToReview = async (req,res) => {
  */
 export const updateFlashcard = async (req,res) => {
     try {
-        const {id,front,back,urlFront,urlBack} = req.params
+        const {id,} = req.params
+        const {front,back,urlFront,urlBack} = req.body
         const {userId} = req.user
-        let query = db.update(flashcard)
-        if(front) {
-            query = query.set({front:front})
-        }
-        if(back) {
-            query = query.set({back:back})
-        }
-        if(urlFront) {
-            query = query.set({urlFront:urlFront})
-        }
-        if(urlBack) {
-            query = query.set({urlBack:urlBack})
-        }
-        query = query.where(eq(flashcard.id,id)).orderBy('created_at','desc')
+        const dataToUpdate = {}
 
-        const [flashcardToUpdate] = await query
+        if (front !== undefined) dataToUpdate.front = front
+
+        if (back !== undefined) dataToUpdate.back = back
+
+        if (urlFront !== undefined) dataToUpdate.urlFront = urlFront
+
+        if (urlBack !== undefined) dataToUpdate.urlBack = urlBack
+
+        if (Object.keys(dataToUpdate).length == 0) {
+            return res.status(400).json({ message: 'No data to update' })
+        }
+        
+        const [flashcardToUpdate] = await db.select().from(flashcard).where(eq(flashcard.id, id))
+       
         if(!flashcardToUpdate){
             return res.status(404).json({message: 'Flashcard does not exist'})
         }
-        const [collectionResult] = await db.select().from(collection).where(eq(collection.id,flashcardToUpdate.collectionId))
+        
+
+        const [collectionResult] = await db.select().from(collection).where(and(eq(collection.id,flashcardToUpdate.collectionId),(eq(collection.createdBy,userId))))
+
         if(!collectionResult){
-            return res.status(404).json({message: 'Collection of flashcard not found'})
+            return res.status(404).json({message: 'Collection of flashcard not found or you do not have the right to view this collections flashcards '})
         }
-        if(collectionResult.createdBy!=userId && collectionResult.visibility==false && !user.isAdmin){
-            return res.status(403).json({message: "You do not have the right to view this collection's flashcards"})
-        }
+
+        const result = await db.update(flashcard).set(dataToUpdate).where(and(eq (flashcard.id, id)))
+
         res.status(200).json({message : `Flashcard ${id} updated`})
     } catch (error) {
         console.error(error)
@@ -147,19 +157,21 @@ export const updateFlashcard = async (req,res) => {
  */
 export const deleteFlashcard = async (req,res) => {
     try {
-        const {flashcardId} = req.params
+        const {id} = req.params
         const {userId} = req.user
-        const [deletedFlashcard] = await db.delete(flashcard).where(eq(flashcard.id,flashcardId)).returning()
+        const [deletedFlashcard] = await db.select().from(flashcard).where(eq(flashcard.id, id))
+        
         if(!deletedFlashcard){
             return res.status(404).json({message: 'Flashcard does not exist'})
         }
-        const [collectionResult] = await db.select().from(collection).where(eq(collection.id,deletedFlashcard.collectionId))
+        const [collectionResult] = await db.select().from(collection).where(and(eq(collection.id,deletedFlashcard.collectionId),eq(collection.createdBy,userId)))
+        
         if(!collectionResult){
-            return res.status(404).json({message: 'Collection of flashcard not found'})
+            return res.status(404).json({message: 'Collection of flashcard not found or you do not have the right to view this collections flashcards '})
         }
-        if(collectionResult.createdBy!=userId && collectionResult.visibility==false && !user.isAdmin){
-            return res.status(403).json({message: "You do not have the right to view this collection's flashcards"})
-        }
+
+        db.delete(flashcard).where(eq(flashcard.id,id)).execute()
+
         res.status(200).json({message : `flashcard ${id} deleted`})
     } catch (error) {
         console.error(error)

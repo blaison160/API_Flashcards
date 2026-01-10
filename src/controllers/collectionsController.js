@@ -29,13 +29,12 @@ export const deleteCollection = async (req,res) => {
     try {
         const {id} = req.params
         const {userId} = req.user
-        const [deletedCollection] = await db.delete(collection).where(eq(collection.id,id))
-        if(!deletedCollection){
-            return res.status(404).json({message: 'Collection not found'})
+        const result = await db.delete(collection).where(and(eq(collection.id,id),eq(collection.createdBy,userId)))
+        
+        if(result.rowsAffected == 0){
+            return res.status(404).json({message: 'Collection not found or not owned by user'})
         }
-        if(deletedCollection.createdBy!=userId){
-            return res.status(403).json({message: "You do not have the right to delete this collection"})
-        }
+
         res.status(200).json({message : `Collection ${id} deleted`})
     } catch (error) {
         console.error(error)
@@ -111,29 +110,34 @@ export const getCollectionsByTitle = async (req,res) => {
  * @param {request} req 
  * @param {response} res 
  */
-export const updateCollection = async (req,res) => {
+export const updateCollection = async (req, res) => {
     try {
-        let query = db.update(collection)
-        const {id,title,description,visibility} = req.params
+        const {id} = req.params
+        const {title, description, visibility} = req.body
         const {userId} = req.user
-        if(title) {
-            query = query.set({title: title})
+        const dataToUpdate = {}
+
+        if (title !== undefined) dataToUpdate.title = title
+
+        if (description !== undefined) dataToUpdate.description = description
+
+        if (visibility !== undefined) dataToUpdate.visibility = visibility
+
+        if (Object.keys(dataToUpdate).length == 0) {
+            return res.status(400).json({ message: 'No data to update' })
         }
-        if(description) {
-            query = query.set({description: description})
+
+        const result = await db.update(collection).set(dataToUpdate).where(and(eq (collection.id, id), eq(collection.createdBy, userId)))
+
+        if (result.rowsAffected == 0) {
+            return res.status(404).json({ message: 'Collection not found or not owned by user' })
         }
-        if(visibility) {
-            query = query.set({visibility: visibility})
-        }
-        query = query.where(and(eq(collection.id,id)),(eq(collection.createdBy,userId)))
-        const result = await query
-        if(!result){
-            return res.status(404).json({message: 'Collection to update does not exist'})
-        }
-        res.status(200).json({message : `Collection ${id} updated`})
+
+        res.status(200).json({ message: `Collection ${id} updated` })
     } catch (error) {
         console.error(error)
-        res.status(500).json({error: 'Failed to querry collections'})
+        res.status(500).json({ error: 'Failed to query collections' })
     }
 }
+
 

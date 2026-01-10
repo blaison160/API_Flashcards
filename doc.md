@@ -177,19 +177,141 @@ A confirmation message if the update was successful, an error message otherwise.
 
 ### Flashcards
 
-router.delete('/:id',validateParams(flashcardIdSchema),deleteFlashcard)
+#### Create a new flashcard
+Create a new flashcard in a given collection
 
-router.get('/:id',validateParams(flashcardIdSchema),getFlashcardById)
+```POST /flashcards```
 
-router.get('/collection/:id',validateParams(collectionIdSchema),getFlashcardByColletionId)
+**Body**
 
-router.get('/review/',getFlashcardsToReview)
+- 'front' (String) : the text on the front of the flashcard
 
-router.patch('/:id',validateBody(createFlashcardSchema),updateFlashcard)
+- 'back' (String) : the text on the back of the flashcard
 
-router.patch('/review/:id',validateBody(flashcardlevelSchema),reviewFlashcard)
+- 'collectionId' (String) : UUID of the given collection
 
-router.post('/',validateBody(createFlashcardSchema),createFlashcard)
+These fields are optional
+
+- 'urlFront' (String) : the url on the front of the flashcard
+
+- 'urlBack' (String) : the url on the back of the flashcard
+
+#### Get all flashcard from a collection
+Return all flashcards of a given public collection or from the user's private one
+
+```GET /flashcards/collection/:id```
+
+Parameters :
+
+- 'id' ( String) : UUID of the collection
+
+**returned JSON**
+
+A list of JSON objects containing the ID, title, description, visibility and the creator's ID of each collection created by the user
+
+[
+  {
+    "id": <uuid>,
+    "front": <front>,
+    "back": <back>,
+    "urlFront": <urlFront>,
+    "urlBack": <urlBack>,
+    "collectionId": <uuid>
+  },
+  {
+    ...
+  },
+  {
+    ...
+  }
+]
+
+#### Get a flashcard
+Finds a flashcard that is in a public or user's private collection using the provided ID 
+
+```GET /flashcards/:id```
+Parameters :
+- 'id' ( String) : UUID of the searched flashcard
+
+**returned JSON**
+
+- 'id' (String) : the UUID of the flashcard
+- 'front' (String) : the text on the front of the flashcard
+- 'back' (String) : the text on the back of the flashcard
+- 'urlFront' (String) : the url on the front of the flashcard
+- 'urlBack' (String) : the url on the back of the flashcard
+- 'collectionId' (String) : the UUID of the flashcard collection
+
+#### Get all flashcards to review
+Return all flashcards a user have to review today
+
+```GET /flashcards/review```
+
+**returned JSON**
+
+A list of JSON objects containing the ID, title, description, visibility and the creator's ID of each collection created by the user
+
+[
+  {
+    "id": <uuid>,
+    "front": <front>,
+    "back": <back>,
+    "urlFront": <urlFront>,
+    "urlBack": <urlBack>,
+    "collectionId": <uuid>
+  },
+  {
+    ...
+  },
+  {
+    ...
+  }
+]
+
+#### Set the review delay of a flashcard
+Set the delay for the next time the flashcard has to be reviewed
+
+```PATCH /flashcards/review:id```
+
+Parameters :
+- 'id' ( String) : UUID of the searched flashcard
+
+**Body**
+- 'level' (Integer) : the delay <1/2/3/4/5>
+
+#### Delete a flashcard
+Delete a flashcard that is in a public or user's private collection using the provided ID 
+
+```DELETE /flashcards/:id``
+
+Parameters :
+- 'id' ( String) : UUID of the searched flashcard
+
+**returned JSON**
+
+A confirmation message if the update was successful, an error message otherwise.
+
+#### Update a flashcard
+Update a flashcard that is in a public or user's private collection using the provided ID 
+
+```PATCH /flashcards/:id``
+
+Parameters :
+- 'id' ( String) : UUID of the searched flashcard
+
+**Body**
+
+- 'id' (String) : the UUID of the flashcard
+- 'front' (String) : the text on the front of the flashcard
+- 'back' (String) : the text on the back of the flashcard
+- 'urlFront' (String) : the url on the front of the flashcard
+- 'urlBack' (String) : the url on the back of the flashcard
+
+
+**returned JSON**
+
+A confirmation message if the update was successful, an error message otherwise.
+
 
 ### Admin
 > :warning: These operations require being an Admin
