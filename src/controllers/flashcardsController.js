@@ -91,7 +91,10 @@ export const getFlashcardByColletionId = async (req,res) => {
 
 export const getFlashcardsToReview = async (req,res) => {
     try {
-        const reviews = await db.select().from(review).where(lte(review.lastReview,calculateDate(review.level))).orderBy('created_at','desc')
+        const results = await db.select('flashcards.*').from(review)
+        .fullJoin('flashcards','flashcards.id','reviews.flashcardsId')
+        .where(lte(review.lastReview,calculateDate(review.level)))
+        .orderBy('reviews.created_at','desc')
         if(!result){
             return res.status(404).json({message: 'Collection not found'})
         }
